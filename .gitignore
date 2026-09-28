@@ -1,0 +1,13 @@
+# Archivos generados por Quartus
+db/
+incremental_db/
+output_files/
+*.qws
+*.smsg
+*.rpt
+*.summary
+*.sof
+*.pof
+*.jic
+*.rbf
+*.jdi
