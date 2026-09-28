@@ -1,5 +1,5 @@
 --==============================================================================
--- D-type flip-flop with asynchronous reset and enable
+-- Generic 2-to-1 multiplexer with N-bit inputs and output
 --==============================================================================
 
 library ieee;
@@ -9,40 +9,42 @@ use ieee.std_logic_1164.all;
 -- Entity declaration
 --==============================================================================
 
-entity FlipFlopD is
-    port (
-        D      : in  std_logic; -- Data input
-        CLK    : in  std_logic; -- Clock signal
-        RESET  : in  std_logic; -- Asynchronous reset, active low
-        ENABLE : in  std_logic; -- Enable, active high
-        Q      : out std_logic  -- Stored output
+entity Mux2x1N is
+    generic (
+        N : positive := 8 -- Multiplexer width in bits
     );
-end entity FlipFlopD;
+    port (
+        I0  : in  std_logic_vector(N - 1 downto 0); -- Input 0
+        I1  : in  std_logic_vector(N - 1 downto 0); -- Input 1
+        SEL : in  std_logic;                        -- Select input
+        Y   : out std_logic_vector(N - 1 downto 0)  -- Multiplexer output
+    );
+end entity Mux2x1N;
 
 --==============================================================================
--- Architecture: behavioral description of the D-type flip-flop
+-- Architecture: behavioral description of the generic 2-to-1 multiplexer
 --==============================================================================
 
-architecture beh of FlipFlopD is
+architecture beh of Mux2x1N is
 begin
 
     --==========================================================================
-    -- Sequential process
+    -- Combinational multiplexer process
     --==========================================================================
 
-    process (CLK, ENABLE, RESET) is
+    process (I0, I1, SEL) is
     begin
-        -- Asynchronous reset
-        if RESET = '0' then
-            Q <= '0';
+        case SEL is
+            when '0' =>
+                Y <= I0;
 
-        -- Clocked operation when enable is active
-        elsif ENABLE = '1' then
-            if CLK'event and CLK = '1' then
-                Q <= D;
-            end if;
-        end if;
-    end process; -- End of sequential process
+            when '1' =>
+                Y <= I1;
+
+            when others =>
+                Y <= (others => '0');
+        end case;
+    end process; -- End of combinational multiplexer process
 
 end architecture beh; -- End of behavioral architecture
 
